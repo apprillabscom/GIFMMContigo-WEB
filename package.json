@@ -1,0 +1,54 @@
+{
+  "name": "oim-landing",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": "http://localhost:3000/",
+  "dependencies": {
+    "@material-ui/core": "^4.12.3",
+    "@material-ui/icons": "^4.11.2",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
+    "antd": "^4.16.13",
+    "axios": "^0.21.1",
+    "date-fns": "^2.24.0",
+    "firebase": "^4.8.0",
+    "leaflet": "^1.7.1",
+    "material-ui-icons": "^1.0.0-beta.36",
+    "react": "^17.0.2",
+    "react-activity": "^2.1.1",
+    "react-csv": "^2.0.3",
+    "react-data-grid": "^7.0.0-beta.4",
+    "react-dom": "^17.0.2",
+    "react-file-reader": "^1.1.4",
+    "react-hook-form": "^7.14.2",
+    "react-icons": "^4.2.0",
+    "react-inner-image-zoom": "^3.0.0",
+    "react-leaflet": "^3.2.5",
+    "react-number-format": "^4.9.1",
+    "react-pro-sidebar": "^0.6.0",
+    "react-router-dom": "^5.2.1",
+    "react-script-tag": "^1.1.2",
+    "react-scripts": "4.0.3",
+    "react-table": "^7.7.0",
+    "styled-components": "^5.3.1",
+    "web-vitals": "^1.1.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ]
+}

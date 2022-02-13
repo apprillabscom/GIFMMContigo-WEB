@@ -1,0 +1,843 @@
+.divMenu {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: flex-start;
+    padding: 0px 0px 0px 24px;
+    width: 100%;
+    height: 95%;
+    left: 0px;
+    top: 0px;
+    background: #FFFFFF;
+
+
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+
+    position: absolute;
+    height: 107px;
+    left: 24px;
+    top: 0px;
+    width: 94%;
+    /* Color/Surface */
+
+    background: #FFFFFF;
+    border-bottom: 6px solid #E7EAEC;
+}
+
+
+.headerFlex {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 0px 0px 24px;
+    position: static;
+    width: 100%;
+    height: 106px;
+    left: 0px;
+    top: 0px;
+}
+
+.bodyDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: flex-start;
+    padding: 0px 48px 32px;
+    position: relative;
+    height: 584px;
+    top: 197px;
+    width: 94%;
+
+}
+
+.tabmenu1 {
+
+    /* Auto layout */
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px 8px 0px 4px;
+
+    position: static;
+    width: 145px;
+    height: 40px;
+    left: 8px;
+    top: 305px;
+    cursor: pointer;
+
+}
+
+.tabmenu2 {
+    /* Auto layout */
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px 8px 0px 4px;
+
+    position: static;
+    width: 143px;
+    height: 40px;
+    left: 8px;
+    top: 375px;
+    cursor: pointer;
+}
+
+.menuTexto {
+    position: static;
+    width: 101px;
+    height: 14px;
+    left: 36px;
+    top: 13px;
+
+    /* Caption/Bold */
+
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 14px;
+    /* identical to box height */
+
+    text-align: center;
+    letter-spacing: 0.004em;
+
+    /* Color/Primary */
+
+    color: #00AAAD;
+
+
+    /* Inside auto layout */
+
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+    margin: 0px 8px;
+}
+
+.headerTitle {
+    position: static;
+    width: 617px;
+    height: 76px;
+    left: 16px;
+    top: 0px;
+
+    /* H5/Regular */
+
+    font-family: Dosis;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 27px;
+    line-height: 34px;
+    display: flex;
+    align-items: center;
+
+    color: #000000;
+
+
+    /* Inside auto layout */
+
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 1;
+
+}
+
+.logoHeader {
+    position: static;
+    width: 323px;
+    height: 76px;
+    left: 706px;
+    top: 0px;
+
+
+    /* Inside auto layout */
+
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+
+}
+
+.logoHeaderImg {
+    width: 323px;
+    height: 76px;
+}
+
+.itemDepar {
+    position: static;
+    width: 440px;
+    left: calc(50% - 440px/2);
+    top: 0%;
+    bottom: 86.96%;
+
+
+    /* Inside auto layout */
+
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+    margin: 24px 20px;
+}
+
+.itemDivLabel {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 14px 16px;
+    left: 45px;
+    right: 0px;
+    top: 11.11%;
+    bottom: 11.11%;
+    position: relative;
+    cursor: pointer;
+
+    /* Others/PrimaryTransparent */
+
+    background: rgba(0, 170, 173, 0.2);
+    border-radius: 8px;
+}
+
+.logoDepartImg {
+
+    position: absolute;
+    width: 72px;
+    left: 0px;
+    top: -13px;
+    bottom: 0px;
+    left: -13px;
+
+}
+
+.input-label {
+    font-family: Dosis;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 22px;
+    line-height: 28px;
+    /* identical to box height */
+
+    text-align: center;
+    letter-spacing: 0.0015em;
+    text-transform: capitalize;
+    /* Color/Primary */
+
+    color: #00AAAD;
+}
+
+.divInformacion {
+    /* Auto layout */
+
+
+    position: fixed;
+    background: white;
+    height: 731px;
+    right: 0px;
+    top: 0px;
+
+
+}
+
+.info-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0 10px 10px;
+
+    position: static;
+    width: 411px;
+    left: calc(50% - 411px/2);
+    top: 0%;
+    bottom: 0%;
+
+    /* Color/Surface */
+
+    background: #FFFFFF;
+}
+
+.info-title {
+    position: static;
+
+    left: 164.5px;
+    top: 6px;
+    font-family: Dosis;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 28px;
+    /* identical to box height */
+
+    text-align: center;
+    letter-spacing: 0.0015em;
+
+    /* Color/OnSecundary */
+
+    color: #003031;
+    text-transform: capitalize;
+
+}
+
+.itemDeparD {
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: static;
+    width: 411px;
+    left: calc(50% - 411px/2);
+    top: 0%;
+    bottom: 78.26%;
+    padding: 15px 17px 16px;
+    /* Color/Surface */
+
+    background: #FFFFFF;
+    border-bottom: 1px solid #E7EAEC;
+    border-top: 1px solid #E7EAEC;
+
+}
+
+.input-label-d {
+    /* position: static; */
+    width: 339px;
+    height: 48px;
+    /* left: 16px; */
+    /* top: 15px; */
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0.15px;
+    color: #003031;
+    text-transform: capitalize;
+    flex: none;
+    order: 0;
+    flex-grow: 1;
+
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+
+.detalle-tarjeta {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 15px 17px 16px;
+
+    position: static;
+    width: 411px;
+    height: 99px;
+    left: 0px;
+    top: 88px;
+
+    /* Color/Surface */
+
+    background: #FFFFFF;
+
+    /* Inside auto layout */
+
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 0;
+    margin: 0px 0px;
+}
+
+.label-nombre-organizacion {
+
+    position: static;
+    width: 379px;
+    left: 16px;
+    top: 12px;
+    padding: 5px;
+    /* Subtitle1/Bold */
+
+    font-family: Dosis;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 23px;
+    /* identical to box height */
+
+    letter-spacing: 0.0015em;
+
+    /* Color/PrimaryVariant */
+
+    color: #007681;
+}
+
+.label-telefono {
+
+    position: static;
+    width: 351px;
+    left: 28px;
+    top: 10%;
+    bottom: 10%;
+    padding: 5px;
+    /* Body2/Regular */
+
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    letter-spacing: 0.0025em;
+
+    /* Color/OnSecundary */
+
+    color: #003031;
+}
+
+.label-horario {
+
+    position: static;
+    width: 351px;
+    left: 28px;
+    top: 2.5%;
+    bottom: 2.5%;
+    padding: 5px;
+    /* Body2/Regular */
+
+    font-family: Roboto;
+    font-style: normal;
+    font-size: 16px;
+    line-height: 19px;
+    /* identical to box height */
+
+    letter-spacing: 0.005em;
+
+    /* Color/OnSecundary */
+
+    color: #003031;
+}
+
+.leaflet-container {
+    width: 60vw;
+    height: 613px;
+}
+
+.map-popup {
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px 0px 40px;
+    overflow-y: scroll;
+    position: absolute;
+    left: 60%;
+    right: 0%;
+    top: 14.72%;
+    bottom: 0%;
+
+    /* Color/Surface */
+
+    background: #FFFFFF;
+}
+
+.map-info-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0 10px 10px;
+    width: 100%;
+
+    position: static;
+    left: calc(50% - 411px/2);
+    top: 0%;
+    bottom: 0%;
+
+    /* Color/Surface */
+
+    background: #FFFFFF;
+    border-bottom: 1px solid #E7EAEC;
+}
+
+.punto-div-1 {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 16px;
+    position: static;
+    width: 100%;
+    height: 70px;
+    left: 0px;
+    top: 42px;
+    background: #FFFFFF;
+    border-bottom: 1px solid #E7EAEC;
+}
+
+.punto-label-1 {
+    font-family: Dosis;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 23px;
+    letter-spacing: 0.0015em;
+    max-width: 300px;
+    /* Color/OnSecundary */
+
+    color: #003031;
+}
+
+.punto-div-2 {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    position: static;
+    width: 130px;
+    height: 34px;
+    left: 265px;
+    top: 18px;
+
+    /* Color/Secundary */
+
+    background: #132A3E;
+    border-radius: 25px;
+}
+
+.punto-label-2 {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 15px;
+    line-height: 18px;
+    /* identical to box height */
+
+    text-align: center;
+    letter-spacing: 0.0125em;
+
+    /* Color/OnPrimary */
+
+    color: #FFFFFF;
+}
+
+.punto-div-3 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px 16px;
+
+    position: static;
+    width: 90%;
+    height: 136px;
+    left: 0px;
+    top: 114px;
+
+    /* Color/Surface */
+
+    background: #FFFFFF;
+}
+
+.punto-label-3 {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    letter-spacing: 0.0025em;
+    padding-left: 10.5px;
+    /* Color/OnSecundary */
+
+    color: #003031;
+}
+
+.punto-div-4 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 4px 4px 4px 8px;
+
+    position: static;
+    height: 40px;
+    left: 16px;
+    top: 48px;
+    width: inherit;
+    /* Color/Secundary */
+
+    background: #132A3E;
+    border-radius: 4px;
+}
+
+.punto-label-4 {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    letter-spacing: 0.0025em;
+
+    /* Color/OnPrimary */
+
+    color: #FFFFFF;
+    text-transform: uppercase;
+
+}
+
+.punto-div-5 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+    position: static;
+    min-width: 153px;
+    height: 20px;
+    left: 16px;
+    top: 104px;
+}
+
+
+.punto-label-5 {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    letter-spacing: 0.0025em;
+    padding: 10px;
+    /* Color/OnSecundary */
+
+    color: #003031;
+}
+
+.punto-label-6 {
+    /* Subtitle1/Bold */
+
+    font-family: Dosis;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 23px;
+    /* identical to box height */
+
+    letter-spacing: 0.0015em;
+
+    /* Color/PrimaryVariant */
+
+    color: #007681;
+}
+
+.punto-div-6 {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 12px 16px;
+
+    position: static;
+    width: 411px;
+    height: 52px;
+    left: 0px;
+    top: 0px;
+
+    /* Color/Surface */
+
+    background: #FFFFFF;
+}
+
+.punto-label-7 {
+    position: static;
+    width: 81px;
+    height: 28px;
+    left: 16px;
+    top: 12px;
+
+    /* H6/Bold */
+
+    font-family: Dosis;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 22px;
+    line-height: 28px;
+    /* identical to box height */
+
+    letter-spacing: 0.0015em;
+
+    /* Color/PrimaryVariant */
+
+    color: #007681;
+}
+
+.punto-div-7 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 16px;
+
+    position: static;
+    width: 94%;
+    height: 424px;
+    left: 0px;
+    top: 52px;
+}
+
+.punto-div-8 {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 12px 16px;
+
+    position: static;
+    width: inherit;
+    height: auto;
+    left: 16px;
+    top: 10px;
+
+    /* Color/Surface */
+
+    background: #FFFFFF;
+    /* Color/Gray/Gray3 */
+
+    border: 1px solid #D0D4D8;
+    box-sizing: border-box;
+    border-radius: 8px;
+    margin: 12px 16px;
+}
+
+.punto-div-9 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0 10px;
+    position: static;
+    width: 316px;
+    height: auto;
+    left: 47px;
+    top: 12px;
+
+}
+
+.service-label-1 {
+    font-family: Dosis;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 23px;
+    letter-spacing: 0.0015em;
+    padding-top: 8px;
+    /* Color/PrimaryVariant */
+
+    color: #007681;
+}
+
+.service-label-2 {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    letter-spacing: 0.0025em;
+    padding-top: 8px;
+    /* Color/OnSecundary */
+
+    color: #003031;
+}
+
+.service-label-3 {
+
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 16px;
+    letter-spacing: 0.0025em;
+    padding-top: 8px;
+
+    /* Color/OnSecundary */
+
+    color: #003031;
+
+
+}
+
+.service-label-4 {
+
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    letter-spacing: 0.0025em;
+    padding-top: 8px;
+
+    /* Color/OnSecundary */
+
+    color: #003031;
+
+
+}
+
+.filtro-div {
+    position: absolute;
+    width: 409px;
+    height: 613px;
+    right: 0;
+    /* Color/Surface */
+
+    background: #FFFFFF;
+}
+
+.filtro-div-1 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+}
+
+.filtro-div-2 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px;
+
+    position: absolute;
+    width: 409px;
+    left: calc(50% - 409px/2);
+    top: 0.02%;
+    bottom: 93.45%;
+
+    border-radius: 0px;
+}
+
+.filtro-label-1 {
+
+    font-family: Dosis;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 28px;
+    /* identical to box height */
+
+    text-align: center;
+    letter-spacing: 0.0015em;
+
+    /* Color/OnSecundary */
+
+    color: #003031;
+
+}
