@@ -3,12 +3,19 @@ import app from '../Firebase/firebase.config'
 import LineasTelefonicas from "./LineasTelefonicas";
 import PuntosServicio from "./PuntosServicio";
 import './estilos.css'
-import logo from '../recursos/logoHeader.png'
+import logo from '../recursos/logoHeader.png';
+import AuthContext from '../authContext';
 const Homepage = () => {
-
+  const { getConfig } = useContext(AuthContext)
+    
   const [openLineas, setOpenLineas] = useState(false);
   const [openPuntos, setOpenPuntos] = useState(false);
-
+  const [apiMaps, setApiMaps] = useState("");
+  const [activeVisible, setActiveVisible] = useState("")
+  const [estadoTexto, setEstadoTexto] = useState("")
+  const [estadoTipo, setEstadoTipo] = useState("")
+  const [apiServicios, setApiServicios] = useState("");
+    
   const abrirMenuLineas = () => {
     setOpenPuntos(false);
     setOpenLineas(true)
@@ -18,6 +25,20 @@ const Homepage = () => {
     setOpenPuntos(true);
     setOpenLineas(false)
   }
+
+  useEffect(() => {
+    let i = 0;
+    getConfig().then((config) => {
+        setApiMaps(config.apiMapeo)
+        setActiveVisible(config.activeVisible)
+        setEstadoTexto(config.activeStates)
+        setEstadoTipo(config.activeType)
+        setApiServicios(config.apiMapeoServicios)
+
+
+    });
+
+}, [apiMaps,activeVisible, estadoTexto, estadoTipo]);
 
   return (
     <div style={{ display: 'flex' }} >
@@ -58,7 +79,7 @@ const Homepage = () => {
           <LineasTelefonicas />
           : null}
         {openPuntos ?
-          <PuntosServicio />
+          <PuntosServicio apiServicios = {apiServicios} apiMaps = {apiMaps} activeVisible = {activeVisible} estadoTexto={estadoTexto} estadoTipo = {estadoTipo} />
           : null}
       </div>
 

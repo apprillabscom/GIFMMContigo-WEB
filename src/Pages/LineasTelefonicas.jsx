@@ -74,7 +74,7 @@ const LineasTelefonicas = () => {
             <div>
                 
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', margin: 'auto' }}>
                 {dataLineas != undefined && dataLineas.map((item, i) => (
                     <div className="itemDepar" key={i} onClick={() => consultarDepartamento(item)}>
                         <div className='itemDivLabel'>
