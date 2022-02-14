@@ -16,12 +16,21 @@ const TarjetaDetallePunto = (item) => {
     }, [puntoDetalle, puntoServicios]);
 
 
+    const comoLlegar = (item) => {
+
+        let coor = item.split(",");
+        let latitude = parseFloat(coor[0]);
+        let longitude = parseFloat(coor[1]);
+
+        window.open("https://maps.google.com/?q=" + latitude + "," + longitude, '_blank');
+
+    }
     return (
         <>
             <div className='punto-div-1'>
                 <label className='punto-label-1'>{puntoDetalle.Nombre_punto}</label>
                 <div className='punto-div-2'>
-                    <label className='punto-label-2'>¿Como llegar?</label>
+                    <label className='punto-label-2' onClick={() => comoLlegar(puntoDetalle.Coordenadas)}>¿Como llegar?</label>
                 </div>
             </div>
             <div className='punto-div-3'>
