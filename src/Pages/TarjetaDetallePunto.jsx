@@ -8,7 +8,7 @@ const TarjetaDetallePunto = (item) => {
 
     useEffect(() => {
 
-        console.log(puntoDetalle)
+        
         setPuntoDetalle(item.item)
         setPuntoServicios(item.item.Servicios)
 

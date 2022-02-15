@@ -8,6 +8,12 @@ const getAllLineasTelefonicas = (api) => {
     return http.get(api);
 };
 
+const getAllServiciosTel = (api) => {
+
+    console.log(api)
+    return http.get(api);
+};
+
 const getAllMapas = (api) => {
 
     
@@ -27,5 +33,6 @@ const getAllServicios = (api) => {
 export default {
     getAllLineasTelefonicas,
     getAllMapas,
-    getAllServicios
+    getAllServicios,
+    getAllServiciosTel
 };

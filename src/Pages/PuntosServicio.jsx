@@ -4,17 +4,18 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import markerIconPng from "leaflet/dist/images/marker-icon.png"
 import { Icon } from 'leaflet'
 import DetalleServiciosImagen from './DetalleServiciosImagen';
-import {isMobile} from 'react-device-detect';
+import { isMobile } from 'react-device-detect';
 import 'leaflet/dist/leaflet.css';
 import TarjetaDetallePunto from './TarjetaDetallePunto';
-import Select from 'react-select'
+import Select from 'react-select';
+import AuthContext from '../authContext';
 
 const PuntosServicio = (props) => {
     const [dataServicios, setDataServicios] = useState([]);
-
+    const { getConfig } = useContext(AuthContext)
     const [dataPuntos, setDataPuntos] = useState([]);
     const [dataPuntosT, setDataPuntosT] = useState([]);
-    const position = [5.5204723, -67.7419737];
+    const position = [4.570868, -74.297333];
     const [showResults, setShowResults] = useState(false);
     const [showFiltros, setShowFiltros] = useState(true);
     const [dataPunto, setDataPunto] = useState({})
@@ -25,15 +26,40 @@ const PuntosServicio = (props) => {
     const [selectMuni, setSelectMuni] = useState("");
     const [selectEstado, setSelectEstado] = useState("");
     const [checkedItems, setCheckedItems] = useState({}); //plain object as state
-
-
+    const [apiMaps, setApiMaps] = useState("");
+    const [activeVisible, setActiveVisible] = useState("")
+    const [estadoTexto, setEstadoTexto] = useState("")
+    const [estadoTipo, setEstadoTipo] = useState("")
+    const [apiServicios, setApiServicios] = useState("");
 
     useEffect(() => {
+        let i = 0;
+        getConfig().then((config) => {
+            setApiMaps(config.apiMapeo)
+            setActiveVisible(config.activeVisible)
+            setEstadoTexto(config.activeStates)
+            setEstadoTipo(config.activeType)
+            setApiServicios(config.apiMapeoServicios)
+
+            getPuntos();
+        });
+
+    }, [apiMaps, activeVisible, estadoTexto, estadoTipo, apiServicios]);
+
+
+    const getPuntos = () => {
 
 
 
-        DataService.getAllMapas(props.apiMaps)
+        DataService.getAllMapas(apiMaps)
             .then(response => {
+
+
+                setDataPuntos(response.data);
+                setDataPuntosT(response.data)
+
+                getServicios();
+
 
                 const value = response.data.filter(function (item) {
                     const textVisible = item.Visible_publico;
@@ -42,15 +68,11 @@ const PuntosServicio = (props) => {
 
 
 
-                    return (props.estadoTexto.indexOf(textState) > -1 && props.estadoTipo.indexOf(textType) > -1 && props.activeVisible.indexOf(textVisible) > -1);
+                    return (props.estadoTextoP.indexOf(textState) > -1 && props.estadoTipoP.indexOf(textType) > -1 && props.activeVisibleP.indexOf(textVisible) > -1);
 
                 })
-                setDataPuntos(value);
-                setDataPuntosT(value)
 
-                getServicios();
-
-                console.log("entre", value)
+                
                 const uniqueEstados = Array.from(new Set(value && value.map((item) => item.Estado)));
 
                 let arrayE = [];
@@ -116,26 +138,18 @@ const PuntosServicio = (props) => {
 
 
 
-    }, [])
+    }
 
 
 
 
 
     const getServicios = () => {
-        DataService.getAllServicios(props.apiServicios).then(response => {
+        DataService.getAllServicios(apiServicios).then(response => {
 
-            const value = response.data.filter(function (item) {
-                const textVisible = item.visibilidad_servicio;
-
-
-
-                return (textVisible === "SI");
-
-            })
 
             var arr = [];
-            value.map(index => {
+            response.data.map(index => {
 
                 arr.push({ name: index.servicio, label: index.servicio, value: index.id_servicio, img_servicio: index.img_servicio });
 
@@ -383,32 +397,42 @@ const PuntosServicio = (props) => {
     return (
 
         <>
-            <div>
-                <MapContainer style={{ position: 'fixed', height: '80vh' }} center={position} zoom={7} scrollWheelZoom={false} id="map">
+            <div className='mapa-div-1'>
+
+                <MapContainer style={{ position: 'relative', height: '80vh', width: '100%' }} center={position} zoom={7} scrollWheelZoom={false} id="map">
                     <TileLayer
                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
                     {dataPuntosT.map((statistic, index) => {
 
-                        if (statistic.Coordenadas !== "") {
-                            let coor = statistic.Coordenadas.split(",");
-                            let latitude = parseFloat(coor[0]);
-                            let longitude = parseFloat(coor[1]);
-                            return (
-                                <Marker key={index} position={[latitude, longitude]} icon={new Icon({ iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41] })}
-                                    eventHandlers={{
-                                        click: () => {
-                                            consultarPunto(statistic);
-                                        },
-                                    }}
-                                >
+                        const textVisible = statistic.Visible_publico;
+                        const textState = statistic.Estado_id;
+                        const textType = statistic.Tipo_ubicacion;
+                        if (estadoTexto.indexOf(textState) > -1 && estadoTipo.indexOf(textType) > -1 && activeVisible.indexOf(textVisible) > -1) {
 
-                                </Marker>
-                            )
+
+
+                            if (statistic.Coordenadas !== "") {
+                                let coor = statistic.Coordenadas.split(",");
+                                let latitude = parseFloat(coor[0]);
+                                let longitude = parseFloat(coor[1]);
+                                return (
+                                    <Marker key={index} position={[latitude, longitude]} icon={new Icon({ iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41] })}
+                                        eventHandlers={{
+                                            click: () => {
+                                                consultarPunto(statistic);
+                                            },
+                                        }}
+                                    >
+
+                                    </Marker>
+                                )
+                            }
                         }
                     })}
                 </MapContainer>
+
             </div>
             {showFiltros ?
                 <div className='filtro-div'>
@@ -429,10 +453,11 @@ const PuntosServicio = (props) => {
                         </div>
                         <div className='filtro-div-5'>
                             <label className='filtro-label-2'>Tipo de Servicio</label>
-                            <div className='filtro-div-6'>
-                                {
+                            <div className='grid-filtros'>
+                               
+                            {
                                     dataServicios.map(item => (
-                                        <div className='filtro-div-7'>
+                                        <div className='filtro-div-7' >
                                             <img width={23} height={23} src={'https://mapeo-de-servicios.gifmm-colombia.site' + item?.img_servicio} />
                                             <label className='filtro-label-3' key={item.key}>
                                                 {item.name}
@@ -442,7 +467,7 @@ const PuntosServicio = (props) => {
                                         </div>
                                     ))
                                 }
-
+                            
 
                             </div>
                         </div>
@@ -453,6 +478,7 @@ const PuntosServicio = (props) => {
                             <div className='filtro-div-10' onClick={() => filtrarServicios()}>
                                 <label className='filtro-label-5'>Filtrar</label>
                             </div>
+                            
                         </div>
                     </div>
 
@@ -474,25 +500,26 @@ const PuntosServicio = (props) => {
                             <label onClick={() => volverFiltro()} className='result-label-2'>Volver a Filtrar</label>
                         </div>
                     </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', margin: '20px'}}>
+                    <div style={{ width: "100%" }}>
+                        <div className='grid-resultados'>
                             {dataPuntosT != undefined && dataPuntosT.map((item, i) => (
-                                <div className='result-div-4'>
+                                <div className='result-div-4' key={i}>
+
                                     <label className='result-label-title'>{item.Nombre_punto}</label>
                                     <div className='result-div-5'>
 
                                         {item.Servicios !== undefined && item.Servicios.map((l, i) => (
-                                            <DetalleServiciosImagen puntoServicios={l} apiServicios={props.apiServicios} />
+                                            <DetalleServiciosImagen puntoServicios={l} apiServicios={apiServicios} />
 
                                         ))}
                                     </div>
                                     <div className='result-div-6'>
-                                        <svg width="16" height="19" viewBox="0 0 16 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M13.3033 13.47L8 18.7733L2.69667 13.47C1.64779 12.4211 0.933489 11.0847 0.644107 9.62986C0.354725 8.175 0.503256 6.66701 1.07092 5.29657C1.63858 3.92613 2.59987 2.7548 3.83324 1.93069C5.0666 1.10658 6.51665 0.666718 8 0.666718C9.48336 0.666718 10.9334 1.10658 12.1668 1.93069C13.4001 2.7548 14.3614 3.92613 14.9291 5.29657C15.4968 6.66701 15.6453 8.175 15.3559 9.62986C15.0665 11.0847 14.3522 12.4211 13.3033 13.47ZM8 11.5C8.88406 11.5 9.7319 11.1488 10.357 10.5237C10.9821 9.89855 11.3333 9.05071 11.3333 8.16665C11.3333 7.2826 10.9821 6.43475 10.357 5.80963C9.7319 5.18451 8.88406 4.83332 8 4.83332C7.11595 4.83332 6.2681 5.18451 5.64298 5.80963C5.01786 6.43475 4.66667 7.2826 4.66667 8.16665C4.66667 9.05071 5.01786 9.89855 5.64298 10.5237C6.2681 11.1488 7.11595 11.5 8 11.5ZM8 9.83332C7.55798 9.83332 7.13405 9.65772 6.82149 9.34516C6.50893 9.0326 6.33334 8.60868 6.33334 8.16665C6.33334 7.72462 6.50893 7.3007 6.82149 6.98814C7.13405 6.67558 7.55798 6.49999 8 6.49999C8.44203 6.49999 8.86595 6.67558 9.17851 6.98814C9.49107 7.3007 9.66667 7.72462 9.66667 8.16665C9.66667 8.60868 9.49107 9.0326 9.17851 9.34516C8.86595 9.65772 8.44203 9.83332 8 9.83332Z" fill="#902857" />
-                                        </svg>
-                                        <label className='result-label-4'>
-                                            {item.Estado}
-                                        </label>
-
+                                    <svg width="16" height="19" viewBox="0 0 16 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M13.3033 13.47L8 18.7733L2.69667 13.47C1.64779 12.4211 0.933489 11.0847 0.644107 9.62986C0.354725 8.175 0.503256 6.66701 1.07092 5.29657C1.63858 3.92613 2.59987 2.7548 3.83324 1.93069C5.0666 1.10658 6.51665 0.666718 8 0.666718C9.48336 0.666718 10.9334 1.10658 12.1668 1.93069C13.4001 2.7548 14.3614 3.92613 14.9291 5.29657C15.4968 6.66701 15.6453 8.175 15.3559 9.62986C15.0665 11.0847 14.3522 12.4211 13.3033 13.47ZM8 11.5C8.88406 11.5 9.7319 11.1488 10.357 10.5237C10.9821 9.89855 11.3333 9.05071 11.3333 8.16665C11.3333 7.2826 10.9821 6.43475 10.357 5.80963C9.7319 5.18451 8.88406 4.83332 8 4.83332C7.11595 4.83332 6.2681 5.18451 5.64298 5.80963C5.01786 6.43475 4.66667 7.2826 4.66667 8.16665C4.66667 9.05071 5.01786 9.89855 5.64298 10.5237C6.2681 11.1488 7.11595 11.5 8 11.5ZM8 9.83332C7.55798 9.83332 7.13405 9.65772 6.82149 9.34516C6.50893 9.0326 6.33334 8.60868 6.33334 8.16665C6.33334 7.72462 6.50893 7.3007 6.82149 6.98814C7.13405 6.67558 7.55798 6.49999 8 6.49999C8.44203 6.49999 8.86595 6.67558 9.17851 6.98814C9.49107 7.3007 9.66667 7.72462 9.66667 8.16665C9.66667 8.60868 9.49107 9.0326 9.17851 9.34516C8.86595 9.65772 8.44203 9.83332 8 9.83332Z" fill="#902857" />
+                                    </svg>
+                                    <label className='result-label-4'>
+                                        {item.Estado}
+                                    </label>
                                     </div>
                                     <div className='result-div-6'>
 
@@ -512,10 +539,14 @@ const PuntosServicio = (props) => {
                                             <label className='filtro-label-4'>Como llegar</label>
                                         </div>
                                     </div>
+
                                 </div>
+
                             ))}
                         </div>
-                   
+                    </div>
+
+
                 </div>
             }
             {showResults ?

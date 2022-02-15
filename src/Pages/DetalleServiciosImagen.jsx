@@ -12,8 +12,7 @@ const DetalleServiciosImagen = (props) => {
 
     useEffect(() => {
 
-        console.log(props)
-
+        
         DataService.getAllServicios(props.apiServicios)
             .then(response => {
 
