@@ -1,8 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import DataService from "../data";
-
+import Select from 'react-select';
 import AuthContext from '../authContext';
 import DetalleDirectorio from './DetalleDirectorio';
+import {
+    Container, Row, Col, Image, Card, Figure, FormGroup,
+    FormControl, InputGroup, Input, Table,
+    Button, Modal
+} from 'react-bootstrap';
 
 
 const LineasTelefonicas = () => {
@@ -12,13 +17,16 @@ const LineasTelefonicas = () => {
     const [dataLineas, setDataLineas] = useState([]);
     const [dataLineasTel, setDataLineasTel] = useState([]);
     const [dataLineasT, setDataLineasT] = useState([]);
+    const [showData, setShowData] = useState(true);
     const [showResults, setShowResults] = useState(false);
     const [showFiltros, setShowFiltros] = useState(false);
     const [dataLinea, setDataLinea] = useState({})
     const [checkedItems, setCheckedItems] = useState({}); //plain object as state
+    const [departamentosMap, setDepartamentosMap] = useState([]);
+    const [selectDepart, setSelectDepart] = useState("");
+    const [showFiltrosM, setShowFiltrosM] = useState(true);
 
     useEffect(() => {
-        let i = 0;
         getConfig().then((config) => {
             setApiDirectory(config.apiLineasTelefonicas)
             setApiLineasTelefonicasServicios(config.apiLineasTelefonicasServicios)
@@ -29,12 +37,7 @@ const LineasTelefonicas = () => {
 
     }, [apiDirectory, apiLineasTelefonicasServicios]);
 
-    useEffect(() => {
 
-        /**/
-
-
-    }, []);
 
     const compareObjects = (object1, object2, key) => {
         const obj1 = object1[key].toUpperCase()
@@ -48,20 +51,52 @@ const LineasTelefonicas = () => {
         return 0;
     };
     const getLineasTelefonicas = () => {
-        DataService.getAllLineasTelefonicas(apiDirectory)
-            .then(response => {
-                setDataLineas(response.data);
+        if (apiDirectory !== undefined) {
+            DataService.getAllLineasTelefonicas(apiDirectory)
+                .then(response => {
+                    setDataLineas(response.data);
 
-                setDataLineasT(response.data.sort(function (a, b) {
-                    return compareObjects(a, b, 'departamento')
-                }))
-            })
-            .catch(e => {
-                console.log(e);
-            });
+                    setDataLineasT(response.data.sort(function (a, b) {
+                        return compareObjects(a, b, 'departamento')
+                    }))
 
+                    const uniqueDepartametos = Array.from(new Set(response.data.map((item) => item.departamento)));
+
+                    let arrayD = [];
+                    uniqueDepartametos.map((item) => {
+                        let array2 = {};
+                        array2.value = item;
+                        array2.label = item;
+                        arrayD.push(array2)
+                    });
+
+                    setDepartamentosMap(
+                        arrayD.sort(function (a, b) {
+                            var nameA = a.label !== undefined ? a.label.toUpperCase() : ""; // ignore upper and lowercase
+                            var nameB = b.label !== undefined ? b.label.toUpperCase() : ""; // ignore upper and lowercase
+                            if (nameA < nameB) {
+                                return -1;
+                            }
+                            if (nameA > nameB) {
+                                return 1;
+                            }
+
+                            // names must be equal
+                            return 0;
+                        })
+                    );
+
+                })
+                .catch(e => {
+                    console.log("No se pudo consultar el api");
+                });
+        }
 
     };
+
+    const handleChangeDepart = (selectDepart) => {
+        setSelectDepart(selectDepart)
+    }
 
     const getServicios = () => {
         DataService.getAllServiciosTel(apiLineasTelefonicasServicios)
@@ -78,7 +113,7 @@ const LineasTelefonicas = () => {
 
             })
             .catch(e => {
-                console.log(e);
+                console.log("No se pudo consultar el api");
             });
 
 
@@ -89,6 +124,7 @@ const LineasTelefonicas = () => {
 
         setDataLinea(item);
         setShowResults(true)
+        //setShowData(false)
     }
 
     const cerrarModal = () => {
@@ -96,51 +132,55 @@ const LineasTelefonicas = () => {
 
         setDataLinea({});
         setShowResults(false)
+        setShowData(true)
     }
 
     const buscar = (event) => {
-        if (event.keyCode === 13) {
-
-            let busqueda = accent_fold(event.target.value.toLowerCase())
 
 
-            const array3 = [];
-            dataLineas.map(element => {
-                var todos = false;
 
-                element.LineasTelefonicas.map(item => {
-
-                    let tipo_linea = accent_fold(item.tipo_de_linea.toLowerCase())
-
-                    if (tipo_linea.includes(busqueda)) {
-                        todos = true;
-                    }
+        let busqueda = accent_fold(event.target.value.toLowerCase())
 
 
-                })
-                if (todos) {
-                    array3.push(element);
+        const array3 = [];
+        dataLineas.map(element => {
+            var todos = false;
+
+            element.LineasTelefonicas.map(item => {
+
+                let tipo_linea = accent_fold(item.tipo_de_linea.toLowerCase())
+
+                if (tipo_linea.includes(busqueda)) {
+                    todos = true;
                 }
 
 
             })
+            if (todos) {
+                array3.push(element);
+            }
+
+
+        })
 
 
 
 
-            const value = dataLineas.filter((item) => {
+        const value = dataLineas.filter((item) => {
 
-                let depart = accent_fold(item.departamento.toLowerCase());
+            let depart = accent_fold(item.departamento.toLowerCase());
 
-                return depart.includes(busqueda)
+            return depart.includes(busqueda)
 
-            });
+        });
 
 
 
-            let array_concat = array3.concat(value);
-            setDataLineasT(array_concat)
-        }
+        let array_concat = array3.concat(value);
+        setDataLineasT(array_concat)
+        setShowFiltrosM(true);
+        setShowData(true);
+
 
     }
     const handleChange = (event) => {
@@ -170,6 +210,7 @@ const LineasTelefonicas = () => {
 
     const filtrarServicios = () => {
         setShowFiltros(false);
+        let depaFiltro = selectDepart.value;
 
         const array = [];
 
@@ -186,7 +227,7 @@ const LineasTelefonicas = () => {
 
         if (array.length > 0) {
 
-            console.log(dataLineas);
+
 
             const array3 = [];
             dataLineas.map(element => {
@@ -211,99 +252,265 @@ const LineasTelefonicas = () => {
 
 
             })
-            setDataLineasT(array3)
+
+            value = array3.filter((item) => {
+                if (depaFiltro !== undefined) {
+                    if (item.departamento !== undefined) {
+                        return item.departamento.toLowerCase() === depaFiltro.toLowerCase()
+                    }
+                } else {
+                    return item;
+                }
+            })
+
+        } else {
+            value = dataLineas.filter((item) => {
+                if (depaFiltro !== undefined) {
+                    if (item.departamento !== undefined) {
+                        return item.departamento.toLowerCase() === depaFiltro.toLowerCase()
+                    }
+                } else {
+                    return item;
+                }
+            })
         }
+
+        setDataLineasT(value);
+        setShowFiltrosM(true);
+        setShowData(true);
 
     }
     const borrarFiltros = () => {
         setShowFiltros(false)
         setCheckedItems({})
-
+        setSelectDepart("");
+        setShowData(true);
+        setShowFiltrosM(true);
+        setShowResults(false);
         setDataLineasT(dataLineas);
+    }
+
+    const cambiarFiltrosM = () => {
+        setShowFiltrosM(false);
+        setShowData(false);
     }
 
 
     return (
-        <div className='container-lineas'>
+        <Container fluid style={{ margin: '0', padding: '0' }}>
 
-            <div className='lineas-filtro'>
-                <div className='lineas-filtro-1'>
-                    <svg width="21" height="22" viewBox="0 0 21 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fillRule="evenodd" clipRule="evenodd" d="M20.314 19.742L16.031 15.46C17.3082 13.8667 18.0029 11.885 18 9.84299C18 4.87499 13.968 0.842987 9 0.842987C4.032 0.842987 0 4.87499 0 9.84299C0 14.811 4.032 18.843 9 18.843C11.042 18.8459 13.0237 18.1512 14.617 16.874L18.899 21.157L20.314 19.742ZM16 9.84299C16.0029 11.6634 15.2941 13.4129 14.025 14.718L13.875 14.868C12.5699 16.1371 10.8204 16.8459 9 16.843C5.132 16.843 2 13.71 2 9.84299C2 5.97499 5.132 2.84299 9 2.84299C12.867 2.84299 16 5.97499 16 9.84299Z" fill="#425565" />
-                    </svg>
-                    <input type={'text'} placeholder="Buscar departamento o servicio" onKeyDown={(e) => buscar(e)} />
-                </div>
-                <div className='lineas-filtro-2' onClick={() => openFiltros()}>
-                    <svg width="18" height="12" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7 12H11V10H7V12ZM0 0V2H18V0H0ZM3 7H15V5H3V7Z" fill="#00AAAD" />
-                    </svg>
-                    <label className='lineas-filtro-l1'>Busqueda por filtro</label>
-                </div>
+            <h3 className='d-lg-none'>Lineas Telefonicas</h3>
+            <Row className='listado-lineas'>
 
-            </div>
-            {showFiltros ?
-                <div className='filtro-div-5'>
-                    <label className='filtro-label-2'>Tipo de Servicio</label>
-                    <div className='grid-filtros-ser'>
+                {showFiltrosM && showData ?
+                    <Col sm={12} lg={8} md={12} xs={12}>
+                        <Row className="text-center align-items-center mb-1">
+                            {dataLineasT != undefined && dataLineasT.map((item, i) => (
+                                <Col sm={6} lg={6} md={6} xs={12} key={i} className="text-left divDetalleDepar" fluid onClick={() => consultarDepartamento(item)}>
+                                    <Card sm={6} lg={6} md={6} xs={12} style={{ display: 'flex', flexDirection: 'row', width: '100%' }} className="text-center itemDeparMobile">
 
-                        {
-                            dataLineasTel.map(item => (
-                                <div className='filtro-div-7'>
-                                    <label className='filtro-label-3' key={item.key}>
-                                        {item.name}
+                                        {item.icon.url !== undefined ?
+                                            <Figure fluid>
+                                                <Figure.Image className='image-tele'
+                                                    src={item.icon.url}
+                                                />
+                                            </Figure>
 
-                                    </label>
-                                    <Checkbox name={item.name} checked={checkedItems[item.name]} onChange={handleChange} />
+                                            :
+                                            null
+                                        }
+
+                                        <Card.Body className='label-telefonica'>{item.departamento.toLowerCase()}</Card.Body>
+
+                                    </Card>
+                                </Col>
+                            ))}
+                        </Row>
+                    </Col>
+                    : null}
+                <Col sm={12} lg={4} md={12} xs={12} className="d-none d-lg-block">
+                    <Card className='mt-1'>
+                        <Card.Title className='text-center card-tel-title'>
+                            Filtrar lineas telefonicas
+                        </Card.Title>
+                        <Card.Subtitle className='text-center card-tel-subtitle'>¡Usa la barra de búsqueda o busca por filtros!</Card.Subtitle>
+                        <Card.Body>
+                            <FormGroup>
+
+                                <InputGroup>
+                                    <FormControl
+                                        placeholder="Buscar departamento o servicio"
+                                        type="input"
+                                        onKeyPress={event => {
+                                            if (event.key === "Enter") {
+                                                buscar(event);
+                                            }
+                                        }}
+                                    />
+                                </InputGroup>
+
+                            </FormGroup>
+                        </Card.Body>
+                        <Card.Body>
+                            <Select width='200px' options={departamentosMap} value={selectDepart} placeholder="Seleccione"
+
+                                className="select-custom-class" onChange={handleChangeDepart} />
+                        </Card.Body>
+                        <Card.Body style={{
+                            maxHeight: 'calc(50vh - 210px)',
+                            overflowY: 'scroll'
+                        }}>
+                            <Card.Subtitle className='text-left'>Tipos de servicio</Card.Subtitle>
+
+                            <Table striped bordered hover>
+                                <tbody>
+                                    {
+
+                                        dataLineasTel.map((item, i) => (
+                                            <tr>
+
+                                                <td key={item.key}>
+                                                    {item.name}
+
+                                                </td>
+                                                <td>
+                                                    <Checkbox name={item.name} checked={checkedItems[item.name]} onChange={handleChange} />
+                                                </td>
+                                            </tr>
+                                        ))
+                                    }
+                                </tbody>
+                            </Table>
+
+
+
+                        </Card.Body>
+                        <Card.Body>
+                            <div className='text-center align-items-center d-flex justify-content-around p-2'>
+                                <Button size="xxl" variant="boton-borrar" onClick={() => borrarFiltros()}>Borrar</Button>
+                                <Button size="xxl" variant="boton-buscar" onClick={() => filtrarServicios()}>Filtrar</Button>
+
+                            </div>
+                        </Card.Body>
+                    </Card>
+
+                </Col>
+                {showData ?
+                    <Col md={{ span: 4, offset: 3 }} sm={{ span: 4, offset: 3 }} xs={{ span: 4, offset: 3 }} className='d-lg-none  text-center align-items-center filtro-linea' >
+                        <Button size="xxl" variant='boton-filtro-linea' onClick={() => cambiarFiltrosM()}>
+                            Filtrar lineas
+                        </Button>
+                    </Col>
+                    : null}
+                {showResults ?
+                    <Col sm={12} lg={4} md={12} xs={12} style={{ height: '75vh', overflowY: 'scroll', padding: '0', margin: '0', zIndex: 450 }} className="d-lg-none position-fixed">
+                        <Card style={{ height: '75vh', overflowY: 'scroll', padding: '0', margin: '0' }}>
+                            <Card.Title className='text-center card-tel-title'>
+                                <svg onClick={() => cerrarModal()} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 10.586L16.95 5.63599L18.364 7.04999L13.414 12L18.364 16.95L16.95 18.364L12 13.414L7.04999 18.364L5.63599 16.95L10.586 12L5.63599 7.04999L7.04999 5.63599L12 10.586Z" fill="#003031" />
+                                </svg>
+                                <label className='info-title'>{dataLinea.departamento.toLowerCase()}</label>
+                                <div></div>
+                            </Card.Title>
+                            <Card.Body style={{ padding: '1rem' }}>
+                                <DetalleDirectorio item={dataLinea.departamento} apiDirectory={apiDirectory} />
+                            </Card.Body>
+                        </Card>
+                    </Col>
+
+                    : null}
+                {showResults ?
+
+                    <Modal show={showResults} onHide={cerrarModal} className='right fade  d-lg-fixed'>
+                        <Modal.Header closeButton>
+                            <Modal.Title><label className='info-title'>{dataLinea.departamento.toLowerCase()}</label></Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Card style={{ height: '75vh', overflowY: 'scroll', padding: '0', margin: '0' }}>
+                                <Card.Body style={{ padding: '1rem' }}>
+                                    <DetalleDirectorio item={dataLinea.departamento} apiDirectory={apiDirectory} />
+                                </Card.Body>
+                            </Card>
+
+                        </Modal.Body>
+                    </Modal>
+
+
+
+                    : null}
+                {!showFiltrosM ?
+
+                    <Col sm={12} lg={4} md={12} xs={12} className="position-relative">
+                        <Card className='mt-1'>
+                            <Card.Title className='text-center card-tel-title'>
+                                Filtrar lineas telefonicas
+                            </Card.Title>
+                            <Card.Subtitle className='text-center card-tel-subtitle'>¡Usa la barra de búsqueda o busca por filtros!</Card.Subtitle>
+                            <Card.Body >
+                                <FormGroup>
+
+                                    <InputGroup>
+                                        <FormControl
+                                            placeholder="Buscar departamento o servicio"
+                                            type="input"
+                                            onKeyPress={event => {
+                                                if (event.key === "Enter") {
+                                                    buscar(event);
+                                                }
+                                            }}
+                                        />
+                                    </InputGroup>
+
+                                </FormGroup>
+                            </Card.Body>
+                            <Card.Body>
+                                <Select width='200px' options={departamentosMap} value={selectDepart} placeholder="Seleccione"
+
+                                    className="select-custom-class" onChange={handleChangeDepart} />
+                            </Card.Body>
+                            <Card.Body style={{
+                                maxHeight: 'calc(100vh - 210px)',
+                                overflowY: 'auto'
+                            }}>
+                                <Card.Subtitle className='text-left'>Tipos de servicio</Card.Subtitle>
+
+                                <Table style={{ height: '600px', overflowY: 'scroll' }} striped bordered hover>
+
+                                    {
+
+                                        dataLineasTel.map((item, i) => (
+                                            <tr>
+
+                                                <td key={item.key}>
+                                                    {item.name}
+
+                                                </td>
+                                                <td>
+                                                    <Checkbox name={item.name} checked={checkedItems[item.name]} onChange={handleChange} />
+                                                </td>
+                                            </tr>
+                                        ))
+                                    }
+                                </Table>
+
+                                <div className='text-center align-items-center d-flex justify-content-around p-2'>
+                                    <Button size="xxl" variant="boton-borrar" onClick={() => borrarFiltros()}>Borrar</Button>
+                                    <Button size="xxl" variant="boton-buscar" onClick={() => filtrarServicios()}>Filtrar</Button>
+
                                 </div>
-                            ))
-                        }
 
+                            </Card.Body>
+                        </Card>
 
-                    </div>
-                    <div className='filtro-div-8'>
-                        <div className='filtro-div-9' onClick={() => borrarFiltros()}>
-                            <label className='filtro-label-4'>Borrar</label>
-                        </div>
-                        <div className='filtro-div-10' onClick={() => filtrarServicios()}>
-                            <label className='filtro-label-5'>Filtrar</label>
-                        </div>
-
-                    </div>
-                </div>
-
-                : null}
-            <div className='div-lineas-1'>
-                {dataLineasT != undefined && dataLineasT.map((item, i) => (
-                    <div className="itemDepar" key={i} onClick={() => consultarDepartamento(item)}>
-                        <div className='itemDivLabel'>
-                            {item.icon.url !== undefined ?
-                                <img src={item.icon.url} alt="Logo" className="logoDepartImg" />
-                                :
-                                <div className="logoDepartImg"></div>
-                            }
-                            <span className="input-label">{item.departamento.toLowerCase()}</span>
-                        </div>
-                    </div>
-                ))}
-            </div>
-            {showResults ?
-                <div className='modal'>
-                    <div className='divInformacion'>
-                        <div className='info-header'>
-                            <svg onClick={() => cerrarModal()} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 10.586L16.95 5.63599L18.364 7.04999L13.414 12L18.364 16.95L16.95 18.364L12 13.414L7.04999 18.364L5.63599 16.95L10.586 12L5.63599 7.04999L7.04999 5.63599L12 10.586Z" fill="#003031" />
-                            </svg>
-                            <label className='info-title'>{dataLinea.departamento.toLowerCase()}</label>
-                            <div></div>
-                        </div>
-                        <DetalleDirectorio item={dataLinea.departamento} apiDirectory={apiDirectory} />
-                    </div>
-                </div>
-                : null}
+                    </Col>
+                    : null}
+            </Row>
 
 
 
-        </div>
+
+
+        </Container>
     );
 }
 export default LineasTelefonicas;

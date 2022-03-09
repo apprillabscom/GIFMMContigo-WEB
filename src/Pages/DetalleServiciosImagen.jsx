@@ -1,15 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react';
-import AuthContext from '../authContext';
+import React, { useState, useEffect, } from 'react';
 import DataService from "../data";
 
 
 const DetalleServiciosImagen = (props) => {
 
-    const { getConfig } = useContext(AuthContext)
-    const [apiServicios, setApiServicios] = useState("");
     const [imagenServicio, setImagenServicio] = useState("");
-    const [puntoServicio, setPuntoServicio] = useState({})
-
+    
     useEffect(() => {
 
         
@@ -25,7 +21,7 @@ const DetalleServiciosImagen = (props) => {
 
             })
             .catch(e => {
-                console.log(e);
+               
             });
 
 
@@ -33,14 +29,14 @@ const DetalleServiciosImagen = (props) => {
         
 
 
-    }, []);
+    });
     
     
 
 
     return (
 
-            <img width={23} height={23} src={'https://mapeo-de-servicios.gifmm-colombia.site'+imagenServicio?.img_servicio} />
+            <img alt="img_servicio" width={23} height={23} src={'https://mapeo-de-servicios.gifmm-colombia.site'+imagenServicio?.img_servicio} />
 
             
        

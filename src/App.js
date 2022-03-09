@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import AuthState from './app-context';
 import Homepage from './Pages/HomePage'

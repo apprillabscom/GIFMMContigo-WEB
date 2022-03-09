@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import TarjetaDetalleDirectorio from './TarjetaDetalleDirectorio';
 import DataService from "../data";
 const DetalleDirectorio = (props) => {
@@ -38,11 +38,11 @@ const DetalleDirectorio = (props) => {
 
             })
             .catch(e => {
-                console.log(e);
+                
             });
 
 
-    }, []);
+    });
 
 
 
@@ -59,7 +59,7 @@ const DetalleDirectorio = (props) => {
                     return(
                         
                         <TarjetaDetalleDirectorio
-                            title={key} detalle= {dataLineasT[key]}
+                            title={key} detalle= {dataLineasT[key]} open = {index==0?true:false}
                         />
                     )
 
