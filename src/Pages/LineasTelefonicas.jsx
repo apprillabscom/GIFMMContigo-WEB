@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import DataService from "../data";
+
 import Select from 'react-select';
 import AuthContext from '../authContext';
 import DetalleDirectorio from './DetalleDirectorio';
@@ -13,6 +13,7 @@ import {
 const LineasTelefonicas = () => {
     const { getConfig } = useContext(AuthContext)
     const [apiDirectory, setApiDirectory] = useState("");
+    const [apiBase, setApiBase] = useState("");
     const [apiLineasTelefonicasServicios, setApiLineasTelefonicasServicios] = useState("");
     const [dataLineas, setDataLineas] = useState([]);
     const [dataLineasTel, setDataLineasTel] = useState([]);
@@ -30,12 +31,13 @@ const LineasTelefonicas = () => {
         getConfig().then((config) => {
             setApiDirectory(config.apiLineasTelefonicas)
             setApiLineasTelefonicasServicios(config.apiLineasTelefonicasServicios)
+            setApiBase(config.apiBaseURL)
             getLineasTelefonicas()
             getServicios();
 
         });
 
-    }, [apiDirectory, apiLineasTelefonicasServicios]);
+    }, [apiBase,apiDirectory, apiLineasTelefonicasServicios]);
 
 
 
@@ -52,15 +54,21 @@ const LineasTelefonicas = () => {
     };
     const getLineasTelefonicas = () => {
         if (apiDirectory !== undefined) {
-            DataService.getAllLineasTelefonicas(apiDirectory)
-                .then(response => {
-                    setDataLineas(response.data);
+            var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
 
-                    setDataLineasT(response.data.sort(function (a, b) {
+        fetch(apiBase+''+apiDirectory,requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                    setDataLineas(data);
+
+                    setDataLineasT(data.sort(function (a, b) {
                         return compareObjects(a, b, 'departamento')
                     }))
 
-                    const uniqueDepartametos = Array.from(new Set(response.data.map((item) => item.departamento)));
+                    const uniqueDepartametos = Array.from(new Set(data.map((item) => item.departamento)));
 
                     let arrayD = [];
                     uniqueDepartametos.map((item) => {
@@ -98,12 +106,20 @@ const LineasTelefonicas = () => {
         setSelectDepart(selectDepart)
     }
 
-    const getServicios = () => {
-        DataService.getAllServiciosTel(apiLineasTelefonicasServicios)
-            .then(response => {
-                console.log(response.data)
+    const getServicios = async () => {
+        
+        
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        await fetch(apiBase+''+apiLineasTelefonicasServicios,requestOptions)
+            .then(response => response.json())
+            .then(data => {
+               
                 var arr = [];
-                response.data.map(index => {
+                data.map(index => {
 
                     arr.push({ name: index.nombre, label: index.nombre, value: index.id });
 
@@ -299,7 +315,7 @@ const LineasTelefonicas = () => {
     return (
         <Container fluid style={{ margin: '0', padding: '0' }}>
 
-            <h3 className='d-lg-none'>Lineas Telefonicas</h3>
+            <h3 className='mb-3'>Lineas Telefonicas</h3>
             <Row className='listado-lineas'>
 
                 {showFiltrosM && showData ?
@@ -307,7 +323,7 @@ const LineasTelefonicas = () => {
                         <Row className="text-center align-items-center mb-1">
                             {dataLineasT != undefined && dataLineasT.map((item, i) => (
                                 <Col sm={6} lg={6} md={6} xs={12} key={i} className="text-left divDetalleDepar" fluid onClick={() => consultarDepartamento(item)}>
-                                    <Card sm={6} lg={6} md={6} xs={12} style={{ display: 'flex', flexDirection: 'row', width: '100%' }} className="text-center itemDeparMobile">
+                                    <Card sm={6} lg={6} md={6} xs={12} style={{ display: 'flex', flexDirection: 'row', width: '100%', cursor:'pointer' }} className="text-center itemDeparMobile">
 
                                         {item.icon.url !== undefined ?
                                             <Figure fluid>
@@ -421,14 +437,14 @@ const LineasTelefonicas = () => {
                     : null}
                 {showResults ?
 
-                    <Modal show={showResults} onHide={cerrarModal} className='right fade  d-lg-fixed'>
+                    <Modal show={showResults} onHide={cerrarModal} className='right fade  d-none d-lg-block' id="myModal">
                         <Modal.Header closeButton>
                             <Modal.Title><label className='info-title'>{dataLinea.departamento.toLowerCase()}</label></Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                             <Card style={{ height: '75vh', overflowY: 'scroll', padding: '0', margin: '0' }}>
                                 <Card.Body style={{ padding: '1rem' }}>
-                                    <DetalleDirectorio item={dataLinea.departamento} apiDirectory={apiDirectory} />
+                                    <DetalleDirectorio item={dataLinea.departamento} apiDirectory={apiDirectory} apiBase={apiBase} />
                                 </Card.Body>
                             </Card>
 

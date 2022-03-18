@@ -9,7 +9,7 @@ const TarjetaDetallePunto = (item) => {
 
     useEffect(() => {
 
-
+        console.log(item.item.Servicios)
         setPuntoDetalle(item.item)
         setPuntoServicios(item.item.Servicios)
 

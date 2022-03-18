@@ -1,18 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import TarjetaDetalleDirectorio from './TarjetaDetalleDirectorio';
-import DataService from "../data";
+
 const DetalleDirectorio = (props) => {
 
 
     const [dataLineasT, setDataLineasT] = useState({})
 
 
-    useEffect(() => {
+    useEffect( async() => {
 
 
-        DataService.getAllLineasTelefonicas(props.apiDirectory)
-            .then(response => {
-                let array1 = response.data.find((item) => item.departamento === props.item).LineasTelefonicas
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        await fetch(props.apiBase+''+props.apiDirectory,requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                let array1 = data.find((item) => item.departamento === props.item).LineasTelefonicas
                 let nuevoObjeto = {}
                 //Recorremos el arreglo 
                 array1.forEach(x => {

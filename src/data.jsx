@@ -3,38 +3,65 @@ import http from "./axios";
 
 
 const getAllLineasTelefonicas = (api) => {
-    
-    return http.get(api);
+
+    var requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+    };
+
+    return fetch(api, requestOptions)
+
+
 };
 
 const getAllServiciosTel = (api) => {
 
-    
-    return http.get(api);
+
+    var requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+    };
+
+    return fetch(api, requestOptions)
 };
 
 const getAllMapas = (api) => {
 
-    
-    return http.get(api);   
-    
-    
+
+    var requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+    };
+
+    return fetch(api, requestOptions)
+
+
 };
 
 const getAllServicios = (api) => {
 
-    
-    return http.get(api);   
-    
-    
+
+    var requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+    };
+
+    return fetch(api, requestOptions)
+
+
 };
 
 const getAllEstados = (api) => {
 
-    
-    return http.get(api);   
-    
-    
+
+    var requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+    };
+
+    return fetch(api, requestOptions)
+
+
 };
 
 

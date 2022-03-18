@@ -1,19 +1,24 @@
 import React, { useState, useEffect, } from 'react';
-import DataService from "../data";
+
 
 
 const DetalleServiciosImagen = (props) => {
 
     const [imagenServicio, setImagenServicio] = useState("");
     
-    useEffect(() => {
+    useEffect(async () => {
 
         
-        DataService.getAllServicios(props.apiServicios)
-            .then(response => {
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
 
+        await fetch(props.apiBase+''+props.apiServicios,requestOptions)
+            .then(response => response.json())
+            .then(data => {
                 
-                var service = response.data.find((element) => {
+                var service = data.find((element) => {
                     return element.id_servicio === props.puntoServicios.Servicio_id;
                   })
 

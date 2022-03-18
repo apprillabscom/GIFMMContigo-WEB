@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import DataService from "../data";
+
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import markerIconPng from "leaflet/dist/images/marker-icon.png"
 import { Icon } from 'leaflet'
@@ -15,6 +15,9 @@ import {
 } from 'react-bootstrap';
 
 const PuntosServicio = (props) => {
+
+
+
     const [dataServicios, setDataServicios] = useState([]);
     const { getConfig } = useContext(AuthContext)
     const [dataPuntos, setDataPuntos] = useState([]);
@@ -33,57 +36,64 @@ const PuntosServicio = (props) => {
     const [selectMuni, setSelectMuni] = useState("");
     const [selectEstado, setSelectEstado] = useState("");
     const [checkedItems, setCheckedItems] = useState({}); //plain object as state
-    const [apiMaps, setApiMaps] = useState("");
-    const [activeVisible, setActiveVisible] = useState("")
+    const [activeVisible, setActiveVisible] = useState("✔")
     const [estadoTexto, setEstadoTexto] = useState("")
     const [estadoTipo, setEstadoTipo] = useState("")
-    const [apiServicios, setApiServicios] = useState("");
-    const [apiEstados, setApiEstados] = useState("");
     const [estadosDMap, setEstadosDMap] = useState([])
     const iconoDefecto = "https://mapeo-de-servicios.gifmm-colombia.site/sites/default/files/iconos/estados-punto/iconos_estado_servicios-18_0.png"
-
+    const apiBaseDefecto = props.apiBase?props.apiBase:"https://mapeo-de-servicios.gifmm-colombia.site/";
     useEffect(() => {
         getConfig().then((config) => {
-            setApiMaps(config.apiMapeo)
-            setActiveVisible(config.activeVisible)
             setEstadoTexto(config.activeStates)
             setEstadoTipo(config.activeType)
-            setApiServicios(config.apiMapeoServicios)
-            setApiEstados(config.apiMapeoEstados)
+            
 
 
-            getPuntos();
         });
 
-    }, [apiMaps, activeVisible, estadoTexto, estadoTipo, apiServicios, apiEstados]);
+
+
+    }, [estadoTexto,estadoTipo]);
+
+    useEffect(() => {
+        getPuntos();
+    },[props.apiMapeo, props.apiBase, props.apiEstados, props.apiServicios])
 
 
     const getPuntos = () => {
 
 
 
-        DataService.getAllMapas(props.apiMapeo)
-            .then(response => {
 
+        var requestOptions = {
+            method: 'GET',
+           
+        };
 
-                setDataPuntos(response.data);
-                setDataPuntosT(response.data)
+        //https://mapeo-de-servicios.gifmm-colombia.site/api-mapeo
+        fetch(`${apiBaseDefecto}${props.apiMapeo}`,requestOptions)
+        //fetch('https://mapeo-de-servicios.gifmm-colombia.site/mapeo-api',requestOptions)
+            .then(response => response.json())
+            .then(data => {
+
+                
+                setDataPuntos(data);
+                setDataPuntosT(data)
 
                 getServicios();
                 getEstados();
 
-                const value = response.data.filter(function (item) {
-                    const textVisible = item.Visible_publico;
+                const value = data.filter(function (item) {
                     const textState = item.Estado_id;
                     const textType = item.Tipo_ubicacion;
-
+                    const textVisible = item.Visible_publico;
 
 
                     return (props.estadoTextoP.indexOf(textState) > -1 && props.estadoTipoP.indexOf(textType) > -1 && props.activeVisibleP.indexOf(textVisible) > -1);
 
                 })
 
-
+                
                 const uniqueEstados = Array.from(new Set(value && value.map((item) => item.Estado)));
 
                 let arrayE = [];
@@ -137,25 +147,20 @@ const PuntosServicio = (props) => {
             })
 
 
-
-
-
-
-
-
-
-
-
-
     }
 
     const getEstados = () => {
 
-        DataService.getAllEstados(apiEstados)
-            .then(response => {
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
 
+        fetch(apiBaseDefecto +''+ props.apiEstados, requestOptions)
+            .then(response => response.json())
+            .then(data => {
 
-                setEstadosDMap(response.data)
+                setEstadosDMap(data)
 
             })
             .catch(e => {
@@ -175,17 +180,25 @@ const PuntosServicio = (props) => {
 
 
     const getServicios = () => {
-        DataService.getAllServicios(apiServicios).then(response => {
+
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        fetch(apiBaseDefecto +''+ props.apiServicios, requestOptions)
+            .then(response => response.json())
+            .then(data => {
 
 
-            var arr = [];
-            response.data.map(index => {
+                var arr = [];
+                data.map(index => {
 
-                arr.push({ name: index.servicio, label: index.servicio, value: index.id_servicio, img_servicio: index.img_servicio });
+                    arr.push({ name: index.servicio, label: index.servicio, value: index.id_servicio, img_servicio: index.img_servicio });
 
+                })
+                setDataServicios(arr)
             })
-            setDataServicios(arr)
-        })
             .catch(e => {
 
             });
@@ -280,11 +293,43 @@ const PuntosServicio = (props) => {
 
     }
 
+    const buscar = (event) => {
+
+        let busqueda = accent_fold(event.target.value.toLowerCase())
+
+        const value = dataPuntos.filter((item) => {
+
+            let nombre = accent_fold(item.Nombre_punto.toLowerCase());
+
+            return nombre.includes(busqueda)
+
+        });
+
+        setDataPuntosT(value)
+        setShowFiltros(false);
+        setShowFiltrosM(false)
+        setMostrarModal(true)
+        setShowGrid(true);
+
+
+    }
+
+    const accent_fold = (s) => {
+        var accent_map = { 'á': 'a', 'é': 'e', 'è': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u', 'Á': 'a', 'É': 'e', 'è': 'e', 'Í': 'i', 'Ó': 'o', 'Ú': 'u' };
+
+        if (!s) { return ''; }
+        var ret = '';
+        for (var i = 0; i < s.length; i++) {
+            ret += accent_map[s.charAt(i)] || s.charAt(i);
+        }
+        return ret;
+    };
+
     const filtrarServicios = () => {
 
         setShowFiltros(false);
         setShowFiltrosM(false)
-setMostrarModal(true)
+        setMostrarModal(true)
         setShowGrid(true);
 
         let depaFiltro = selectDepart.value;
@@ -560,8 +605,8 @@ setMostrarModal(true)
     return (
 
         <Container fluid style={{ margin: '0', padding: '0' }}>
-            
 
+            <h3 className='mb-3'>Puntos de servicio</h3>
             <Row className='listado-lineas'>
 
                 <Col sm={12} lg={!showFiltros ? 4 : 8} md={12} xs={12}>
@@ -618,6 +663,23 @@ setMostrarModal(true)
                                 Filtrar puntos de servicio
                             </Card.Title>
 
+                            <Card.Body>
+                                <FormGroup>
+
+                                    <InputGroup>
+                                        <FormControl
+                                            placeholder="Buscar punto servicio"
+                                            type="input"
+                                            onKeyPress={event => {
+                                                if (event.key === "Enter") {
+                                                    buscar(event);
+                                                }
+                                            }}
+                                        />
+                                    </InputGroup>
+
+                                </FormGroup>
+                            </Card.Body>
                             <Card.Body>
                                 <Select width='200px' options={departamentosMap} value={selectDepart} placeholder="Seleccione" defaultValue={""}
 
@@ -683,6 +745,21 @@ setMostrarModal(true)
                             </Card.Title>
 
                             <Card.Body>
+                                <FormGroup>
+
+                                    <InputGroup>
+                                        <FormControl
+                                            placeholder="Buscar punto servicio"
+                                            type="input"
+                                            onKeyPress={event => {
+                                                if (event.key === "Enter") {
+                                                    buscar(event);
+                                                }
+                                            }}
+                                        />
+                                    </InputGroup>
+
+                                </FormGroup>
                                 <Select width='200px' options={departamentosMap} value={selectDepart} placeholder="Seleccione" defaultValue={""}
 
                                     className="select-custom-class" onChange={handleChangeDepart} />
@@ -749,12 +826,12 @@ setMostrarModal(true)
                             <Card.Title>
                                 <Row>
                                     <Col className='col-1'>
-                                <svg width="18" height="22" viewBox="0 0 18 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M9 18.9L13.95 13.95C14.9289 12.971 15.5955 11.7237 15.8656 10.3659C16.1356 9.00801 15.9969 7.60058 15.4671 6.32154C14.9373 5.0425 14.04 3.94929 12.8889 3.18015C11.7378 2.41101 10.3844 2.00049 9 2.00049C7.61557 2.00049 6.26222 2.41101 5.11109 3.18015C3.95996 3.94929 3.06275 5.0425 2.53292 6.32154C2.00308 7.60058 1.86442 9.00801 2.13445 10.3659C2.40449 11.7237 3.07111 12.971 4.05 13.95L9 18.9ZM9 21.728L2.636 15.364C1.37734 14.1053 0.520187 12.5017 0.172928 10.7558C-0.17433 9.01001 0.00390685 7.20041 0.685099 5.55588C1.36629 3.91136 2.51984 2.50575 3.99988 1.51683C5.47992 0.527899 7.21998 6.10352e-05 9 6.10352e-05C10.78 6.10352e-05 12.5201 0.527899 14.0001 1.51683C15.4802 2.50575 16.6337 3.91136 17.3149 5.55588C17.9961 7.20041 18.1743 9.01001 17.8271 10.7558C17.4798 12.5017 16.6227 14.1053 15.364 15.364L9 21.728ZM9 11C9.53044 11 10.0391 10.7893 10.4142 10.4142C10.7893 10.0391 11 9.53042 11 8.99998C11 8.46955 10.7893 7.96084 10.4142 7.58577C10.0391 7.2107 9.53044 6.99998 9 6.99998C8.46957 6.99998 7.96086 7.2107 7.58579 7.58577C7.21072 7.96084 7 8.46955 7 8.99998C7 9.53042 7.21072 10.0391 7.58579 10.4142C7.96086 10.7893 8.46957 11 9 11ZM9 13C7.93914 13 6.92172 12.5786 6.17158 11.8284C5.42143 11.0783 5 10.0608 5 8.99998C5 7.93912 5.42143 6.9217 6.17158 6.17156C6.92172 5.42141 7.93914 4.99998 9 4.99998C10.0609 4.99998 11.0783 5.42141 11.8284 6.17156C12.5786 6.9217 13 7.93912 13 8.99998C13 10.0608 12.5786 11.0783 11.8284 11.8284C11.0783 12.5786 10.0609 13 9 13Z" fill="#003031" />
-                                </svg>
-                                </Col>
-                                <Col><label className='result-label-1'>{selectDepart.value} - {selectMuni.value} - {selectEstado.value}  </label></Col>
-                                <Col><label onClick={() => volverFiltro()} className='result-label-2'>Volver a Filtrar</label></Col>
+                                        <svg width="18" height="22" viewBox="0 0 18 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 18.9L13.95 13.95C14.9289 12.971 15.5955 11.7237 15.8656 10.3659C16.1356 9.00801 15.9969 7.60058 15.4671 6.32154C14.9373 5.0425 14.04 3.94929 12.8889 3.18015C11.7378 2.41101 10.3844 2.00049 9 2.00049C7.61557 2.00049 6.26222 2.41101 5.11109 3.18015C3.95996 3.94929 3.06275 5.0425 2.53292 6.32154C2.00308 7.60058 1.86442 9.00801 2.13445 10.3659C2.40449 11.7237 3.07111 12.971 4.05 13.95L9 18.9ZM9 21.728L2.636 15.364C1.37734 14.1053 0.520187 12.5017 0.172928 10.7558C-0.17433 9.01001 0.00390685 7.20041 0.685099 5.55588C1.36629 3.91136 2.51984 2.50575 3.99988 1.51683C5.47992 0.527899 7.21998 6.10352e-05 9 6.10352e-05C10.78 6.10352e-05 12.5201 0.527899 14.0001 1.51683C15.4802 2.50575 16.6337 3.91136 17.3149 5.55588C17.9961 7.20041 18.1743 9.01001 17.8271 10.7558C17.4798 12.5017 16.6227 14.1053 15.364 15.364L9 21.728ZM9 11C9.53044 11 10.0391 10.7893 10.4142 10.4142C10.7893 10.0391 11 9.53042 11 8.99998C11 8.46955 10.7893 7.96084 10.4142 7.58577C10.0391 7.2107 9.53044 6.99998 9 6.99998C8.46957 6.99998 7.96086 7.2107 7.58579 7.58577C7.21072 7.96084 7 8.46955 7 8.99998C7 9.53042 7.21072 10.0391 7.58579 10.4142C7.96086 10.7893 8.46957 11 9 11ZM9 13C7.93914 13 6.92172 12.5786 6.17158 11.8284C5.42143 11.0783 5 10.0608 5 8.99998C5 7.93912 5.42143 6.9217 6.17158 6.17156C6.92172 5.42141 7.93914 4.99998 9 4.99998C10.0609 4.99998 11.0783 5.42141 11.8284 6.17156C12.5786 6.9217 13 7.93912 13 8.99998C13 10.0608 12.5786 11.0783 11.8284 11.8284C11.0783 12.5786 10.0609 13 9 13Z" fill="#003031" />
+                                        </svg>
+                                    </Col>
+                                    <Col><label className='result-label-1'>{selectDepart.value} - {selectMuni.value} - {selectEstado.value}  </label></Col>
+                                    <Col><label onClick={() => volverFiltro()} className='result-label-2'>Volver a Filtrar</label></Col>
                                 </Row>
                             </Card.Title>
                         </Card>
@@ -778,7 +855,7 @@ setMostrarModal(true)
                                                     <Col>
                                                         <Row>
                                                             {item.Servicios !== undefined && item.Servicios.map((l, i) => (
-                                                                <DetalleServiciosImagen puntoServicios={l} apiServicios={apiServicios} />
+                                                                <DetalleServiciosImagen puntoServicios={l} apiServicios={props.apiServicios} apiBase= {props.apiBase} />
 
                                                             ))}
                                                         </Row>
@@ -820,17 +897,17 @@ setMostrarModal(true)
                             <Card.Title className='text-center card-tel-title'>
                                 <Row>
                                     <Col className='col-1'>
-                                <svg onClick={() => cerrarModal()} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 10.586L16.95 5.63599L18.364 7.04999L13.414 12L18.364 16.95L16.95 18.364L12 13.414L7.04999 18.364L5.63599 16.95L10.586 12L5.63599 7.04999L7.04999 5.63599L12 10.586Z" fill="#003031" />
-                                </svg>
-                                </Col>
-                                <Col>
-                                <label className='info-title'>Informacion de punto</label>
-                                </Col>
-                                
+                                        <svg onClick={() => cerrarModal()} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M12 10.586L16.95 5.63599L18.364 7.04999L13.414 12L18.364 16.95L16.95 18.364L12 13.414L7.04999 18.364L5.63599 16.95L10.586 12L5.63599 7.04999L7.04999 5.63599L12 10.586Z" fill="#003031" />
+                                        </svg>
+                                    </Col>
+                                    <Col>
+                                        <label className='info-title'>Informacion de punto</label>
+                                    </Col>
+
                                 </Row>
                             </Card.Title>
-                            <Card.Body style={{ padding: '2rem', height:'80vh' }}>
+                            <Card.Body style={{ padding: '2rem', height: '80vh' }}>
                                 <TarjetaDetallePunto item={dataPunto} />
                             </Card.Body>
                         </Card>

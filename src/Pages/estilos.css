@@ -43,9 +43,10 @@ h2 {
     font-size: 12px;
     line-height: 14px;
     /* identical to box height */
-
+    cursor: pointer;
     letter-spacing: 0.004em;
-
+    padding: 0%;
+    margin: 0%;
     /* Color/Primary */
 
     color: #00AAAD;
@@ -348,18 +349,25 @@ h3 {
     .grid-absolute {
         z-index: 400;
         padding: 0;
-        max-height: 80vh!important;
+        max-height: 80vh !important;
     }
 
-    .grid-resultados{
-        padding: 20px 50px!important;
+    .grid-resultados {
+        padding: 20px 50px !important;
     }
 
-    .modal {
-        display: none;
+    #mymodal{
+        display: none !important;
     }
+
+    .modal-backdrop{
+        display: none !important;;
+    }
+    
+    
 
 }
+
 
 .result-label-title {
     font-family: Dosis;

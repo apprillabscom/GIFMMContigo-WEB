@@ -15,7 +15,7 @@ const AuthState = (props) => {
   const getConfig = () => {
     return new Promise((resolve, reject) => {
       app.database()
-        .ref("/config/")
+        .ref("/configWebApis/")
         .once("value", (snapshot) => {
           if (snapshot.hasChildren())
           resolve(snapshot.val());
