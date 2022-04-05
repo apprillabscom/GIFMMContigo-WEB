@@ -96,7 +96,7 @@ const TarjetaDetallePunto = (item) => {
                         <label className='punto-label-7'>Servicios</label>
 
                     </Row>
-                    <Col style={{maxHeight: '50vh', overflow: 'scroll'}}>
+                    <Col style={{maxHeight: '50vh', overflowY: 'auto'}}>
 
                         {puntoServicios !== undefined && puntoServicios.map((l, i) => (
                             <DetalleServicios key={i} puntoServicios={l} />

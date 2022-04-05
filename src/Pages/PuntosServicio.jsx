@@ -691,7 +691,7 @@ const PuntosServicio = (props) => {
                             </Card.Body>
                             <Card.Body style={{
                                 maxHeight: 'calc(50vh - 210px)',
-                                overflowY: 'scroll'
+                                overflowY: 'auto'
                             }}>
                                 <Card.Subtitle className='text-left mb-1'>Tipos de servicio</Card.Subtitle>
 
@@ -770,7 +770,7 @@ const PuntosServicio = (props) => {
                             </Card.Body>
                             <Card.Body style={{
                                 maxHeight: 'calc(50vh)',
-                                overflowY: 'scroll'
+                                overflowY: 'auto'
                             }}>
                                 <Card.Subtitle className='text-left mb-1'>Tipos de servicio</Card.Subtitle>
 
@@ -819,7 +819,7 @@ const PuntosServicio = (props) => {
                 {showGrid ?
                     <Col sm={12} lg={8} md={12} xs={12} className="grid-absolute" style={{
                         maxHeight: 'calc(80vh - 210px)',
-                        overflowY: 'scroll'
+                        overflowY: 'auto'
 
                     }}>
                         <Card >
@@ -892,8 +892,8 @@ const PuntosServicio = (props) => {
                     : null
                 }
                 {showResults ?
-                    <Col sm={12} lg={4} md={12} xs={12} style={{ height: '75vh', overflowY: 'scroll', padding: '0', margin: '0', zIndex: 450 }} className="d-lg-none position-absolute">
-                        <Card style={{ height: '75vh', overflowY: 'scroll', padding: '0', margin: '0', border: '0' }}>
+                    <Col sm={12} lg={4} md={12} xs={12} style={{ height: '75vh', overflowY: 'auto', padding: '0', margin: '0', zIndex: 450 }} className="d-lg-none position-absolute">
+                        <Card style={{ height: '75vh', overflowY: 'auto', padding: '0', margin: '0', border: '0' }}>
                             <Card.Title className='text-center card-tel-title'>
                                 <Row>
                                     <Col className='col-1'>
@@ -920,7 +920,7 @@ const PuntosServicio = (props) => {
                             <Modal.Title><label className='info-title'>Informacion de punto</label></Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <Card style={{ height: '75vh', overflowY: 'scroll', padding: '0', margin: '0', border: '0' }}>
+                            <Card style={{ height: '75vh', overflowY: 'auto', padding: '0', margin: '0', border: '0' }}>
                                 <Card.Body style={{ padding: '1rem' }}>
                                     <TarjetaDetallePunto item={dataPunto} />
                                 </Card.Body>

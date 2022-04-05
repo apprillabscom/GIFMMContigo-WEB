@@ -374,7 +374,7 @@ const LineasTelefonicas = () => {
                         </Card.Body>
                         <Card.Body style={{
                             maxHeight: 'calc(50vh - 210px)',
-                            overflowY: 'scroll'
+                            overflowY: 'auto'
                         }}>
                             <Card.Subtitle className='text-left'>Tipos de servicio</Card.Subtitle>
 
@@ -419,8 +419,8 @@ const LineasTelefonicas = () => {
                     </Col>
                     : null}
                 {showResults ?
-                    <Col sm={12} lg={4} md={12} xs={12} style={{ height: '75vh', overflowY: 'scroll', padding: '0', margin: '0', zIndex: 450 }} className="d-lg-none position-fixed">
-                        <Card style={{ height: '75vh', overflowY: 'scroll', padding: '0', margin: '0' }}>
+                    <Col sm={12} lg={4} md={12} xs={12} style={{ height: '75vh', overflowY: 'auto', padding: '0', margin: '0', zIndex: 450 }} className="d-lg-none position-fixed">
+                        <Card style={{ height: '75vh', overflowY: 'auto', padding: '0', margin: '0' }}>
                             <Card.Title className='text-center card-tel-title'>
                                 <svg onClick={() => cerrarModal()} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M12 10.586L16.95 5.63599L18.364 7.04999L13.414 12L18.364 16.95L16.95 18.364L12 13.414L7.04999 18.364L5.63599 16.95L10.586 12L5.63599 7.04999L7.04999 5.63599L12 10.586Z" fill="#003031" />
@@ -442,7 +442,7 @@ const LineasTelefonicas = () => {
                             <Modal.Title><label className='info-title'>{dataLinea.departamento.toLowerCase()}</label></Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <Card style={{ height: '75vh', overflowY: 'scroll', padding: '0', margin: '0' }}>
+                            <Card style={{ height: '75vh', overflowY: 'auto', padding: '0', margin: '0' }}>
                                 <Card.Body style={{ padding: '1rem' }}>
                                     <DetalleDirectorio item={dataLinea.departamento} apiDirectory={apiDirectory} apiBase={apiBase} />
                                 </Card.Body>
@@ -490,7 +490,7 @@ const LineasTelefonicas = () => {
                             }}>
                                 <Card.Subtitle className='text-left'>Tipos de servicio</Card.Subtitle>
 
-                                <Table style={{ height: '600px', overflowY: 'scroll' }} striped bordered hover>
+                                <Table style={{ height: '600px', overflowY: 'auto' }} striped bordered hover>
 
                                     {
 
