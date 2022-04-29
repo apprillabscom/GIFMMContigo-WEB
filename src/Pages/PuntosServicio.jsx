@@ -41,23 +41,23 @@ const PuntosServicio = (props) => {
     const [estadoTipo, setEstadoTipo] = useState("")
     const [estadosDMap, setEstadosDMap] = useState([])
     const iconoDefecto = "https://mapeo-de-servicios.gifmm-colombia.site/sites/default/files/iconos/estados-punto/iconos_estado_servicios-18_0.png"
-    const apiBaseDefecto = props.apiBase?props.apiBase:"https://mapeo-de-servicios.gifmm-colombia.site/";
+    const apiBaseDefecto = props.apiBase ? props.apiBase : "https://mapeo-de-servicios.gifmm-colombia.site/";
     useEffect(() => {
         getConfig().then((config) => {
             setEstadoTexto(config.activeStates)
             setEstadoTipo(config.activeType)
-            
+
 
 
         });
 
 
 
-    }, [estadoTexto,estadoTipo]);
+    }, [estadoTexto, estadoTipo]);
 
     useEffect(() => {
         getPuntos();
-    },[props.apiMapeo, props.apiBase, props.apiEstados, props.apiServicios])
+    }, [props.apiMapeo, props.apiBase, props.apiEstados, props.apiServicios])
 
 
     const getPuntos = () => {
@@ -67,16 +67,16 @@ const PuntosServicio = (props) => {
 
         var requestOptions = {
             method: 'GET',
-           
+
         };
 
         //https://mapeo-de-servicios.gifmm-colombia.site/api-mapeo
-        fetch(`${apiBaseDefecto}${props.apiMapeo}`,requestOptions)
-        //fetch('https://mapeo-de-servicios.gifmm-colombia.site/mapeo-api',requestOptions)
+        fetch(`${apiBaseDefecto}${props.apiMapeo}`, requestOptions)
+            //fetch('https://mapeo-de-servicios.gifmm-colombia.site/mapeo-api',requestOptions)
             .then(response => response.json())
             .then(data => {
 
-                
+
                 setDataPuntos(data);
                 setDataPuntosT(data)
 
@@ -93,7 +93,7 @@ const PuntosServicio = (props) => {
 
                 })
 
-                
+
                 const uniqueEstados = Array.from(new Set(value && value.map((item) => item.Estado)));
 
                 let arrayE = [];
@@ -156,7 +156,7 @@ const PuntosServicio = (props) => {
             redirect: 'follow'
         };
 
-        fetch(apiBaseDefecto +''+ props.apiEstados, requestOptions)
+        fetch(apiBaseDefecto + '' + props.apiEstados, requestOptions)
             .then(response => response.json())
             .then(data => {
 
@@ -186,7 +186,7 @@ const PuntosServicio = (props) => {
             redirect: 'follow'
         };
 
-        fetch(apiBaseDefecto +''+ props.apiServicios, requestOptions)
+        fetch(apiBaseDefecto + '' + props.apiServicios, requestOptions)
             .then(response => response.json())
             .then(data => {
 
@@ -592,6 +592,19 @@ const PuntosServicio = (props) => {
 
     }
 
+    const militaryTimeTo12Hour = (s) => {
+
+
+
+        if (s.toString().length == 4) s = `${s.toString()}`; // 930 -> 0930
+        if (s.toString().length == 3) s = `0${s.toString()}`; // 930 -> 0930
+        if (s.toString().length == 1) s = `000${s.toString()}`; // 930 -> 0930
+
+        const hour = parseInt(s.toString().substring(0, 2), 10);
+        const min = s.toString().substring(2, 4);
+        if (hour < 12) return `${hour % 12}:${min} AM`;
+        return `${hour % 12 || 12}:${min} PM`;
+    }
     const comoLlegar = (item) => {
 
         let coor = item.split(",");
@@ -837,6 +850,92 @@ const PuntosServicio = (props) => {
                         </Card>
                         <Row className="text-center align-items-center mb-1">
                             {dataPuntosT != undefined && dataPuntosT.map((item, i) => {
+
+                                let lunesAViernes = [];
+                                item.Horario && item.Horario.map((i, index) => {
+                                    if (i.day !== 0 && i.day != 6) {
+                                        let dato = {}
+                                        dato.id = index + 1;
+                                        dato.day = i.day === 0 ? "Domingo" : i.day === 1 ? "Lunes" : i.day === 2 ?
+                                            "Martes" : i.day === 3 ? "Miercoles" : i.day === 4 ? "Jueves" : i.day === 5 ?
+                                                "Viernes" : "Sabado";
+                                        dato.endhours = i.endhours !== null ? militaryTimeTo12Hour(i.endhours) : i.comment;
+                                        dato.starthours = i.starthours !== null ? militaryTimeTo12Hour(i.starthours) : "";
+                                        lunesAViernes.push(dato);
+                                    }
+
+                                })
+
+                                let sabadoDomingo = [];
+                                item.Horario && item.Horario.map((i, index) => {
+                                    if (i.day === 0 || i.day === 6) {
+                                        let dato = {}
+                                        dato.id = index + 1;
+                                        dato.day = i.day === 0 ? "Domingo" : i.day === 1 ? "Lunes" : i.day === 2 ?
+                                            "Martes" : i.day === 3 ? "Miercoles" : i.day === 4 ? "Jueves" : i.day === 5 ?
+                                                "Viernes" : "Sabado";
+                                        dato.endhours = i.endhours !== null ? militaryTimeTo12Hour(i.endhours) : i.comment;
+                                        dato.starthours = i.starthours !== null ? militaryTimeTo12Hour(i.starthours) : "";
+                                        sabadoDomingo.push(dato);
+                                    }
+
+                                })
+
+
+
+                                let lunesV = lunesAViernes.reduce((groups, groupDay) => {
+
+
+                                    const openingtime = groupDay.starthours + " - " + groupDay.endhours;
+                                    const openingTimeIncludedInAGroup = groups.find(singleDay =>
+                                        singleDay.hours === openingtime)
+
+
+                                    const id = openingTimeIncludedInAGroup && openingTimeIncludedInAGroup.id
+
+                                    if (id) {
+                                        return groups.map(item => item.id === id
+                                            ? { ...item, days: item.days.concat(groupDay.day) }
+                                            : item)
+                                    }
+
+                                    return groups.concat({
+                                        id: Math.random(),
+                                        hours: openingtime,
+                                        days: [groupDay.day]
+                                    })
+
+
+                                }, [])
+
+
+                                let sabadoD =
+                                    sabadoDomingo.reduce((groups, groupDay) => {
+
+
+                                        const openingtime = groupDay.starthours + " - " + groupDay.endhours;
+                                        const openingTimeIncludedInAGroup = groups.find(singleDay =>
+                                            singleDay.hours === openingtime)
+
+
+                                        const id = openingTimeIncludedInAGroup && openingTimeIncludedInAGroup.id
+
+                                        if (id) {
+                                            return groups.map(item => item.id === id
+                                                ? { ...item, days: item.days.concat(groupDay.day) }
+                                                : item)
+                                        }
+
+                                        return groups.concat({
+                                            id: Math.random(),
+                                            hours: openingtime,
+                                            days: [groupDay.day]
+                                        })
+
+
+                                    }, [])
+
+
                                 let estadoA = getEstado(item.Estado_id);
 
                                 const textVisible = item.Visible_publico;
@@ -855,7 +954,7 @@ const PuntosServicio = (props) => {
                                                     <Col>
                                                         <Row>
                                                             {item.Servicios !== undefined && item.Servicios.map((l, i) => (
-                                                                <DetalleServiciosImagen puntoServicios={l} apiServicios={props.apiServicios} apiBase= {props.apiBase} />
+                                                                <DetalleServiciosImagen puntoServicios={l} apiServicios={props.apiServicios} apiBase={props.apiBase} />
 
                                                             ))}
                                                         </Row>
@@ -864,14 +963,40 @@ const PuntosServicio = (props) => {
                                                                 {item.Estado}
                                                             </label>
                                                         </Row>
-                                                        <Row>
-                                                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                <path d="M9.00008 17.3333C4.39758 17.3333 0.666748 13.6025 0.666748 8.99999C0.666748 4.39749 4.39758 0.666656 9.00008 0.666656C13.6026 0.666656 17.3334 4.39749 17.3334 8.99999C17.3334 13.6025 13.6026 17.3333 9.00008 17.3333ZM9.83342 8.99999V4.83332H8.16675V10.6667H13.1667V8.99999H9.83342Z" fill="#425565" />
-                                                            </svg>
-                                                            <label className='result-label-4'>
-                                                                8:00am - 5:00pm
-                                                            </label>
-                                                        </Row>
+                                                        {lunesV.length > 0 ?
+                                                            lunesV.map(group => (
+                                                                <Row>
+
+                                                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                        <path d="M8.99984 17.3333C4.39734 17.3333 0.666504 13.6025 0.666504 9C0.666504 4.3975 4.39734 0.666664 8.99984 0.666664C13.6023 0.666664 17.3332 4.3975 17.3332 9C17.3332 13.6025 13.6023 17.3333 8.99984 17.3333ZM9.83317 9V4.83333H8.1665V10.6667H13.1665V9H9.83317Z" fill="#003031" />
+                                                                    </svg>
+
+
+
+                                                                    <label className='result-label-4'>{group.days.length === 1
+                                                                        ? group.days
+                                                                        : group.days[0] + " - " + group.days[group.days.length - 1]}: {group.hours}</label>
+
+                                                                </Row>
+                                                            ))
+                                                            : null}
+
+                                                        {sabadoD &&
+                                                            sabadoD.map(group => (
+                                                                <Row>
+
+                                                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                        <path d="M8.99984 17.3333C4.39734 17.3333 0.666504 13.6025 0.666504 9C0.666504 4.3975 4.39734 0.666664 8.99984 0.666664C13.6023 0.666664 17.3332 4.3975 17.3332 9C17.3332 13.6025 13.6023 17.3333 8.99984 17.3333ZM9.83317 9V4.83333H8.1665V10.6667H13.1665V9H9.83317Z" fill="#003031" />
+                                                                    </svg>
+
+
+                                                                    <label className='result-label-4'>{group.days.length === 1
+                                                                        ? group.days
+                                                                        : group.days[0] + " - " + group.days[group.days.length - 1]}: {group.hours}</label>
+
+                                                                </Row>
+                                                            ))
+                                                        }
 
                                                         <Button size="xxl" variant="boton-borrar" onClick={() => consultarPunto(item)}>Ver Mas</Button>
                                                         <Button size="xxl" variant="boton-buscar" onClick={() => comoLlegar(item.Coordenadas)}>Como llegar</Button>

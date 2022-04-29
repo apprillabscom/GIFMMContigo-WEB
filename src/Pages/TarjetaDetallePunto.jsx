@@ -6,16 +6,127 @@ const TarjetaDetallePunto = (item) => {
 
     const [puntoDetalle, setPuntoDetalle] = useState({})
     const [puntoServicios, setPuntoServicios] = useState([])
+    const [Horarios, setHorarios] = useState([])
+    const [scheduleToShowLV, setScheduleToShowLV] = useState([])
+    const [scheduleToShowSD, setScheduleToShowSD] = useState([])
+    useEffect(() => {
+
+        console.log(item.item.Horario)
+        setPuntoDetalle(item.item)
+        setPuntoServicios(item.item.Servicios)
+        setHorarios(item.item.Horario)
+
+    }, [puntoDetalle, puntoServicios, Horarios]);
 
     useEffect(() => {
 
-        console.log(item.item.Servicios)
-        setPuntoDetalle(item.item)
-        setPuntoServicios(item.item.Servicios)
+
+        let lunesAViernes = [];
+        Horarios && Horarios.map((i, index) => {
+            if (i.day !== 0 && i.day != 6) {
+                let dato = {}
+                dato.id = index + 1;
+                dato.day = i.day === 0 ? "Domingo" : i.day === 1 ? "Lunes" : i.day === 2 ?
+                    "Martes" : i.day === 3 ? "Miercoles" : i.day === 4 ? "Jueves" : i.day === 5 ?
+                        "Viernes" : "Sabado";
+                dato.endhours = i.endhours !== null ? militaryTimeTo12Hour(i.endhours) : i.comment;
+                dato.starthours = i.starthours !== null ? militaryTimeTo12Hour(i.starthours) : "";
+                lunesAViernes.push(dato);
+            }
+
+        })
+
+        let sabadoDomingo = [];
+        Horarios && Horarios.map((i, index) => {
+            if (i.day === 0 || i.day === 6) {
+                let dato = {}
+                dato.id = index + 1;
+                dato.day = i.day === 0 ? "Domingo" : i.day === 1 ? "Lunes" : i.day === 2 ?
+                    "Martes" : i.day === 3 ? "Miercoles" : i.day === 4 ? "Jueves" : i.day === 5 ?
+                        "Viernes" : "Sabado";
+                dato.endhours = i.endhours !== null ? militaryTimeTo12Hour(i.endhours) : i.comment;
+                dato.starthours = i.starthours !== null ? militaryTimeTo12Hour(i.starthours) : "";
+                sabadoDomingo.push(dato);
+            }
+
+        })
 
 
-    }, [puntoDetalle, puntoServicios]);
 
+        setScheduleToShowLV(
+            lunesAViernes.reduce((groups, groupDay) => {
+
+
+                const openingtime = groupDay.starthours + " - " + groupDay.endhours;
+                const openingTimeIncludedInAGroup = groups.find(singleDay =>
+                    singleDay.hours === openingtime)
+
+
+                const id = openingTimeIncludedInAGroup && openingTimeIncludedInAGroup.id
+
+                if (id) {
+                    return groups.map(item => item.id === id
+                        ? { ...item, days: item.days.concat(groupDay.day) }
+                        : item)
+                }
+
+                return groups.concat({
+                    id: Math.random(),
+                    hours: openingtime,
+                    days: [groupDay.day]
+                })
+
+
+            }, [])
+        )
+
+        setScheduleToShowSD(
+            sabadoDomingo.reduce((groups, groupDay) => {
+
+
+                const openingtime = groupDay.starthours + " - " + groupDay.endhours;
+                const openingTimeIncludedInAGroup = groups.find(singleDay =>
+                    singleDay.hours === openingtime)
+
+
+                const id = openingTimeIncludedInAGroup && openingTimeIncludedInAGroup.id
+
+                if (id) {
+                    return groups.map(item => item.id === id
+                        ? { ...item, days: item.days.concat(groupDay.day) }
+                        : item)
+                }
+
+                return groups.concat({
+                    id: Math.random(),
+                    hours: openingtime,
+                    days: [groupDay.day]
+                })
+
+
+            }, [])
+        )
+
+
+
+
+    }, [Horarios]);
+
+    const militaryTimeTo12Hour = (s) => {
+
+       
+
+        if(s.toString().length == 4) s = `${s.toString()}`; // 930 -> 0930
+        if(s.toString().length == 3) s = `0${s.toString()}`; // 930 -> 0930
+        if(s.toString().length == 1) s = `000${s.toString()}`; // 930 -> 0930
+
+        const hour = parseInt(s.toString().substring(0, 2), 10);
+        const min = s.toString().substring(2, 4);
+        if(hour < 12) return `${hour % 12}:${min} AM`;
+        return `${hour % 12 || 12}:${min} PM`;
+    }
+
+  
 
     const comoLlegar = (item) => {
 
@@ -51,7 +162,7 @@ const TarjetaDetallePunto = (item) => {
                             <label className='punto-label-3'>{puntoDetalle.Estado}</label>
                         </Col>
                     </Row>
-                    <Row style={{backgroundColor:'#132A3E', borderRadius:'4px', margin:'0'}}>
+                    <Row style={{ backgroundColor: '#132A3E', borderRadius: '4px', margin: '0' }}>
                         <Col>
                             <label className='punto-label-4'>{puntoDetalle.Direccion} </label>
                         </Col>
@@ -70,33 +181,51 @@ const TarjetaDetallePunto = (item) => {
                     <Row>
                         <label className='punto-label-6'>Horario del punto</label>
                     </Row>
-                    <Row>
-                        <Col className='col-1'>
-                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M8.99984 17.3333C4.39734 17.3333 0.666504 13.6025 0.666504 9C0.666504 4.3975 4.39734 0.666664 8.99984 0.666664C13.6023 0.666664 17.3332 4.3975 17.3332 9C17.3332 13.6025 13.6023 17.3333 8.99984 17.3333ZM9.83317 9V4.83333H8.1665V10.6667H13.1665V9H9.83317Z" fill="#003031" />
-                            </svg>
-                        </Col>
-                        <Col>
-                            <label>Lunes - Viernes: 9:00 am-12:00 pm, 1:00 pm-4:00 pm</label>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col className='col-1'>
-                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M8.99984 17.3333C4.39734 17.3333 0.666504 13.6025 0.666504 9C0.666504 4.3975 4.39734 0.666664 8.99984 0.666664C13.6023 0.666664 17.3332 4.3975 17.3332 9C17.3332 13.6025 13.6023 17.3333 8.99984 17.3333ZM9.83317 9V4.83333H8.1665V10.6667H13.1665V9H9.83317Z" fill="#003031" />
-                            </svg>
-                        </Col>
-                        <Col>
-                            <label>Sábado - Domingo: Cerrado</label>
-                        </Col>
-                    </Row>
+                    {scheduleToShowLV.length > 0 ?
+                        scheduleToShowLV.map(group => (
+                            <Row>
+                                <Col className='col-1'>
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8.99984 17.3333C4.39734 17.3333 0.666504 13.6025 0.666504 9C0.666504 4.3975 4.39734 0.666664 8.99984 0.666664C13.6023 0.666664 17.3332 4.3975 17.3332 9C17.3332 13.6025 13.6023 17.3333 8.99984 17.3333ZM9.83317 9V4.83333H8.1665V10.6667H13.1665V9H9.83317Z" fill="#003031" />
+                                    </svg>
+                                </Col>
+                                <Col>
+
+
+                                    <label>{group.days.length === 1
+                                        ? group.days
+                                        : group.days[0] + " - " + group.days[group.days.length - 1]}: {group.hours}</label>
+                                </Col>
+                            </Row>
+                        ))
+                        : null}
+
+                    {scheduleToShowSD &&
+                        scheduleToShowSD.map(group => (
+                            <Row>
+                                <Col className='col-1'>
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8.99984 17.3333C4.39734 17.3333 0.666504 13.6025 0.666504 9C0.666504 4.3975 4.39734 0.666664 8.99984 0.666664C13.6023 0.666664 17.3332 4.3975 17.3332 9C17.3332 13.6025 13.6023 17.3333 8.99984 17.3333ZM9.83317 9V4.83333H8.1665V10.6667H13.1665V9H9.83317Z" fill="#003031" />
+                                    </svg>
+                                </Col>
+                                <Col>
+
+
+                                    <label>{group.days.length === 1
+                                        ? group.days
+                                        : group.days[0] + " - " + group.days[group.days.length - 1]}: {group.hours}</label>
+                                </Col>
+                            </Row>
+                        ))
+                        }
+
 
 
                     <Row>
                         <label className='punto-label-7'>Servicios</label>
 
                     </Row>
-                    <Col style={{maxHeight: '50vh', overflowY: 'auto'}}>
+                    <Col style={{ maxHeight: '50vh', overflowY: 'auto' }}>
 
                         {puntoServicios !== undefined && puntoServicios.map((l, i) => (
                             <DetalleServicios key={i} puntoServicios={l} />
